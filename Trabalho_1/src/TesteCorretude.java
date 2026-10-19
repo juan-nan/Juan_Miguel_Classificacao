@@ -39,7 +39,9 @@ public class TesteCorretude {
     }
 
     public static void main(String[] args) {
-        testar("Bubble Sort", v -> Ordenadores.bubbleSort(v, v.length));
+        testar("Bubble Sort", v -> Ordenadores.BubbleSort(v, v.length));
+        System.out.println("\n");
+        testar("Insertion Sort", v -> Ordenadores.InsertionSort(v, v.length));
         // depois quando a gente for testar os outros algoritmos com vetores pequenos pra validacao 
         // só mudar o bubble ai e trocar os parametros
     }

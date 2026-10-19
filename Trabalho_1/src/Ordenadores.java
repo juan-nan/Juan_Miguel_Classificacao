@@ -1,6 +1,6 @@
 public class Ordenadores {
     // bubblesort percorre todo o vetor comparando pares adjacentes e vai trocando até sobrar o maior elemento no fim do vetor
-    public static <T extends Comparable<T>> void bubbleSort(T[] a, int n) {
+    public static <T extends Comparable<T>> void BubbleSort(T[] a, int n) {
         for (int i = 0; i < n - 1; i++) {
             boolean trocou = false;
             for (int j = 0; j < n - 1 - i; j++) {
@@ -15,6 +15,18 @@ public class Ordenadores {
             }
         }
     }
+
+    public static <T extends Comparable<T>> void InsertionSort(T[] a, int n){
+        for(int i = 1; i < n; i++){
+            T chave = a[i];
+            int j = i - 1;
+            while(j>=0 && a[j].compareTo(chave)>0){
+                a[j+1]= a[j];
+                j = j-1;
+            }
+            a[j+1] = chave;
+        }
+    }   
 
     // ---------------- métodos auxiliares ----------------
 //troca pra usar no bubble
