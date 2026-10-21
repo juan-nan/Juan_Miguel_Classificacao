@@ -26,7 +26,72 @@ public class Ordenadores {
             }
             a[j+1] = chave;
         }
-    }   
+    }
+
+    // mergesort divide o vetor ao meio, ordena cada metade recursivamente e depois intercala as duas metades ordenadas
+    public static <T extends Comparable<T>> void MergeSort(T[] a, int n) {
+        // vetor auxiliar criado uma vez só e reaproveitado em todas as intercalações
+        T[] aux = a.clone();
+        mergeSort(a, aux, 0, n - 1);
+    }
+
+    private static <T extends Comparable<T>> void mergeSort(T[] a, T[] aux, int lo, int hi) {
+        if (lo >= hi) {
+            return; // 0 ou 1 elemento: já está ordenado
+        }
+        int meio = lo + (hi - lo) / 2;
+        mergeSort(a, aux, lo, meio);
+        mergeSort(a, aux, meio + 1, hi);
+        intercala(a, aux, lo, meio, hi);
+    }
+
+    // junta a[lo..meio] e a[meio+1..hi], que já estão ordenados, em a[lo..hi]
+    private static <T extends Comparable<T>> void intercala(T[] a, T[] aux, int lo, int meio, int hi) {
+        for (int k = lo; k <= hi; k++) {
+            aux[k] = a[k];
+        }
+        int i = lo;       // início da metade esquerda
+        int j = meio + 1; // início da metade direita
+        for (int k = lo; k <= hi; k++) {
+            if (i > meio) {
+                a[k] = aux[j++];      // esquerda acabou
+            } else if (j > hi) {
+                a[k] = aux[i++];      // direita acabou
+            } else if (aux[i].compareTo(aux[j]) <= 0) {
+                a[k] = aux[i++];      // <= mantém a ordem dos iguais (estável)
+            } else {
+                a[k] = aux[j++];
+            }
+        }
+    }
+
+    // heapsort monta um heap máximo no vetor e vai tirando o maior (a raiz) para o fim, refazendo o heap no que sobra
+    public static <T extends Comparable<T>> void HeapSort(T[] a, int n) {
+        // constrói o heap: começa do último nó que tem filho e desce até a raiz
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            desce(a, i, n);
+        }
+        // a raiz a[0] é o maior: troca com o último e refaz o heap no restante
+        for (int fim = n - 1; fim > 0; fim--) {
+            troca(a, 0, fim);
+            desce(a, 0, fim);
+        }
+    }
+
+    // desce a[i] no heap a[0..tam-1] até ele ficar maior ou igual aos filhos
+    private static <T extends Comparable<T>> void desce(T[] a, int i, int tam) {
+        while (2 * i + 1 < tam) {
+            int filho = 2 * i + 1; // filho da esquerda
+            if (filho + 1 < tam && a[filho + 1].compareTo(a[filho]) > 0) {
+                filho++;           // filho da direita é maior
+            }
+            if (a[i].compareTo(a[filho]) >= 0) {
+                break;             // já respeita o heap
+            }
+            troca(a, i, filho);
+            i = filho;
+        }
+    }
 
     // ---------------- métodos auxiliares ----------------
 //troca pra usar no bubble
