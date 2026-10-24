@@ -101,9 +101,7 @@ public class Ordenadores {
                     min = j;
                 }
             }
-            T temp = a[i];
-            a[i] = a[min];
-            a[min] = temp;
+            troca(a, i, min);
         }
     }
 
@@ -122,6 +120,25 @@ public class Ordenadores {
                 a[j] = x;
             }
         } while (h != 1);
+    }
+
+    public static <T extends Comparable<T>> void QuickSort(int p, int r, T[] a) {
+        T c = a[(p+r)/2];
+        int i = p;
+        int j = r;
+        if (p < r){
+            while(i<=j){
+                while(a[i].compareTo(c)<0) i++;
+               while(c.compareTo(a[j])<0) j--;
+                if(i<=j){
+                    troca(a,i,j);
+                    i++;
+                    j--;
+                }
+            }
+            QuickSort(p, j, a);
+            QuickSort(i, r, a);
+        }
     }
     
 

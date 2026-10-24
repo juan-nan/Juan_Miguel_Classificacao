@@ -48,6 +48,8 @@ public class TesteCorretude {
         testar("Selection Sort", v -> Ordenadores.SelectionSort(v, v.length));
         System.out.println("\n");
         testar("Shell Sort", v -> Ordenadores.ShellSort(v, v.length));
+        System.out.println("\n");
+        testar("Quick Sort", v -> Ordenadores.QuickSort(0, v.length - 1, v));
         // depois quando a gente for testar os outros algoritmos com vetores pequenos pra validacao 
         // só mudar o bubble ai e trocar os parametros
     }
