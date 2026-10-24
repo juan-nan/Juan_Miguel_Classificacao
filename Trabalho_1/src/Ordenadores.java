@@ -107,7 +107,7 @@ public class Ordenadores {
         }
     }
 
-    public static <T extends Comparable<T>> void shellSort(T[] a, int n) {
+    public static <T extends Comparable<T>> void ShellSort(T[] a, int n) {
         int h = 1;
         do { h = 3 * h + 1; } while (h < n); 
         do {
