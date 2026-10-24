@@ -140,6 +140,43 @@ public class Ordenadores {
             QuickSort(i, r, a);
         }
     }
+
+    public static void BucketSort(Integer[] a) {
+        int n = a.length;
+        if (n <= 1) return;
+
+        int min = a[0], max = a[0];
+        for (int i = 0; i < n; i++) {
+            if (a[i] < min) min = a[i];
+            if (a[i] > max) max = a[i];
+        }
+        long faixa = (long) max - min + 1;
+
+        int[] tam = new int[n];
+        for (int i = 0; i < n; i++) {
+            int idx = (int) ((long) (a[i] - min) * n / faixa);
+            tam[idx]++;
+        }
+
+        Integer[][] b = new Integer[n][];
+        for (int i = 0; i < n; i++) b[i] = new Integer[tam[i]];
+
+        int[] pos = new int[n];
+        for (int i = 0; i < n; i++) {
+            int idx = (int) ((long) (a[i] - min) * n / faixa);
+            b[idx][pos[idx]] = a[i];
+            pos[idx]++;
+        }
+
+        int k = 0;
+        for (int i = 0; i < n; i++) {
+            InsertionSort(b[i], b[i].length);
+            for (int j = 0; j < b[i].length; j++) {
+                a[k] = b[i][j];
+                k++;
+            }
+        }
+    }
     
 
     // ---------------- métodos auxiliares ----------------
