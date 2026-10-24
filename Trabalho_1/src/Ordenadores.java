@@ -93,7 +93,7 @@ public class Ordenadores {
         }
     }
 
-        public static <T extends Comparable<T>> void SelectionSort(T[] a, int n){
+    public static <T extends Comparable<T>> void SelectionSort(T[] a, int n){
         for(int i = 0; i < n-1; i++){
             int min = i;
             for(int j = i+1; j<n; j++){
@@ -106,6 +106,24 @@ public class Ordenadores {
             a[min] = temp;
         }
     }
+
+    public static <T extends Comparable<T>> void shellSort(T[] a, int n) {
+        int h = 1;
+        do { h = 3 * h + 1; } while (h < n); 
+        do {
+            h /= 3;
+            for (int i = h; i < n; i++) {
+                T x = a[i];
+                int j = i;
+                while (j >= h && a[j - h].compareTo(x) > 0) {
+                    a[j] = a[j - h];
+                    j -= h;
+                }
+                a[j] = x;
+            }
+        } while (h != 1);
+    }
+    
 
     // ---------------- métodos auxiliares ----------------
 //troca pra usar no bubble
