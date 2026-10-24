@@ -93,6 +93,20 @@ public class Ordenadores {
         }
     }
 
+        public static <T extends Comparable<T>> void SelectionSort(T[] a, int n){
+        for(int i = 0; i < n-1; i++){
+            int min = i;
+            for(int j = i+1; j<n; j++){
+                if(a[j].compareTo(a[min])<0){
+                    min = j;
+                }
+            }
+            T temp = a[i];
+            a[i] = a[min];
+            a[min] = temp;
+        }
+    }
+
     // ---------------- métodos auxiliares ----------------
 //troca pra usar no bubble
     private static <T> void troca(T[] a, int i, int j) {

@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class TesteCorretude {
 
     interface Ordenador {
@@ -46,6 +44,8 @@ public class TesteCorretude {
         testar("Merge Sort", v -> Ordenadores.MergeSort(v, v.length));
         System.out.println("\n");
         testar("Heap Sort", v -> Ordenadores.HeapSort(v, v.length));
+        System.out.println("\n");
+        testar("Selection Sort", v -> Ordenadores.SelectionSort(v, v.length));
         // depois quando a gente for testar os outros algoritmos com vetores pequenos pra validacao 
         // só mudar o bubble ai e trocar os parametros
     }
