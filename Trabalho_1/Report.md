@@ -28,7 +28,9 @@ Ordenadores.java contém a implementacao dos algoritmos
 VetoresTeste.java contém os vetores pequenos usados para validação
 TesteCorretude executa os testes de corretude de cada algoritmo
 VetoresExperimento.java gera os vetores grandes, mede o tempo de cada algoritmo e salva os resultados
-resultados_experimento.csv guarda os tempos medidos, no formato Algoritmo,Tamanho,Caso,TempoMs
+resultados_experimento.csv guarda o tempo de cada execução, uma por linha, no formato Algoritmo,Tamanho,Caso,Repeticao,TempoMs
+resultados_organizados.csv é gerado no fim do experimento: uma linha por algoritmo × tamanho × caso, com os tempos das 10 repetições lado a lado e as estatísticas
+resultados_preliminares.csv guarda os primeiros tempos, de antes das repetições e do aquecimento (não entram nos resultados finais)
 
 Os algoritmos baseados em comparação foram implementados de forma genérica usando a interface Comparable, como foi recomendado nas especificações do trabalho.
 Counting Sort, Radix Sort e Bucket Sort não comparam os elementos entre si, eles usam o valor do número para decidir a posição. Por isso eles recebem um Integer[] em vez de um T[] genérico.
@@ -78,42 +80,76 @@ Esses algoritmos dependem das propriedades dos dados, então é importante deixa
 - Os dados são inteiros. Nenhum dos três funciona direto com qualquer tipo Comparable.
 - No caso aleatório os valores estão entre 0 e 9.999.999, sorteados de forma uniforme.
 - Counting Sort: no caso aleatório k ≈ 10.000.000 para qualquer tamanho de vetor. Para n = 1.000 isso significa um vetor de contagem 10.000 vezes maior que o vetor de entrada (≈ 40 MB), então o custo é dominado por k e não por n. Nos casos crescente e decrescente k ≈ n, que é a situação ideal.
-- Radix Sort: no caso aleatório d = 7 dígitos. Nos casos crescente e decrescente d depende de n (ex.: n = 1.000.000 → 6 dígitos).
+- Radix Sort: no caso aleatório d = 7 dígitos. Nos casos crescente e decrescente d depende de n (ex.: n = 100.000 → 5 dígitos).
 - Bucket Sort: a distribuição uniforme do caso aleatório é o melhor cenário para ele. Nos casos crescente e decrescente cada balde recebe exatamente um elemento.
 
 Por isso a comparação dos lineares com os algoritmos de comparação só é justa nessas condições (inteiros, faixa de valores conhecida e limitada). Com uma faixa bem maior, o Counting Sort ficaria inviável de memória, e o Radix Sort ficaria mais lento com mais dígitos.
 
 ## Metodologia do experimento ##
 
-O VetoresExperimento roda os tamanhos 1.000, 10.000, 100.000 e 1.000.000. Para cada tamanho são gerados três vetores:
+O VetoresExperimento roda os tamanhos 1.000, 10.000 e 100.000 (constante TAMANHOS). Para cada tamanho são gerados três vetores:
 - crescente: 0, 1, 2, ..., n-1
 - decrescente: n, n-1, ..., 1
 - aleatório: n valores sorteados entre 0 e 9.999.999
 
-Todos os algoritmos recebem um clone do mesmo vetor, então dentro de uma execução do programa todos ordenam exatamente a mesma entrada.
+Os algoritmos ficam em dois vetores (NOMES_ALGORITMOS e ALGORITMOS), e o main percorre eles para cada tamanho. Assim os dez algoritmos rodam sempre na mesma ordem e com o mesmo código de medição.
 
 O tempo é medido com System.nanoTime() só em volta da chamada de ordenação, então a geração dos vetores, a cópia e a impressão não entram na medição. O tempo é convertido para milissegundos e salvo no CSV.
 
-Como os algoritmos O(n²) demoram muito nos vetores grandes, o programa salva cada resultado no CSV logo que termina, e antes de rodar uma combinação ele verifica se ela já está no arquivo e pula se estiver. Assim dá pra parar e continuar o experimento depois sem perder o que já rodou.
+Como os algoritmos O(n²) demoram muito nos vetores grandes, o programa salva cada tempo no CSV logo que termina. Antes de rodar uma repetição, ele verifica se ela já está no arquivo e pula se estiver. Assim dá pra parar e continuar o experimento depois sem perder o que já rodou.
+
+No fim, o método GerarCsvOrganizado lê o resultados_experimento.csv e monta o resultados_organizados.csv, no formato Algoritmo,Tamanho,Caso,Rep1,...,Rep10,Media,Mediana,Minimo,Maximo,DesvioPadrao. O desvio-padrão é o amostral (divide por n - 1). Uma configuração só entra nesse arquivo quando as 10 repetições já rodaram, para uma repetição faltando não entrar como zero na média.
+
+### Por que não usamos 1.000.000 de elementos ###
+
+A especificação sugere tamanhos da ordem de 1.000 a 1.000.000, mas permite usar tamanhos diferentes conforme o tempo e os computadores disponíveis (seção 2.2). Pelos dados preliminares, o tempo dos algoritmos O(n²) cresce cerca de 100 vezes quando n cresce 10 vezes. Com n = 100.000, o Bubble Sort já levou cerca de 39 s numa execução do caso aleatório, então com n = 1.000.000 seria perto de 1 hora por execução. Com 10 repetições nos casos decrescente e aleatório, só o Bubble Sort levaria cerca de 20 horas, e o Insertion e o Selection somariam mais de 20 horas. Por isso o maior tamanho do experimento é 100.000.
 
 Hardware e software utilizados: (preencher: processador, memória RAM, sistema operacional, versão do Java)
 
+## Requisitos da especificação e como cumprimos ##
+
+### Mesmos dados de entrada para todos os algoritmos (seções 2.3 e 5) ###
+
+A especificação pede que todos os algoritmos de uma configuração recebam exatamente a mesma entrada, e que cada execução use uma cópia do vetor original.
+
+Como cumprimos:
+- Os três vetores de cada tamanho são gerados uma vez só (CriarCasos) e cada execução recebe um clone (Casos[j].clone()). A cópia é feita antes do nanoTime, então não entra no tempo.
+- O vetor aleatório é gerado com uma semente fixa (SEMENTE = 42, new Random(SEMENTE)). Antes usávamos new Random() sem semente, e se o programa fosse interrompido e rodado de novo, os algoritmos que faltavam recebiam um vetor aleatório diferente dos que já tinham rodado. Com a semente fixa, o vetor aleatório de cada tamanho é sempre o mesmo, em qualquer execução do programa e em qualquer computador.
+
+### Repetições (seção 5) ###
+
+A especificação pede pelo menos 10 execuções de cada combinação algoritmo × tamanho × caso, com todos os tempos individuais registrados.
+
+Como cumprimos:
+- A constante REPETICOES = 10 define quantas vezes cada combinação roda. No RodarTestes, para cada caso tem um laço de 1 a REPETICOES, e cada repetição recebe uma cópia nova do vetor.
+- Cada tempo individual é salvo numa linha do CSV, junto com o número da repetição. O formato agora é Algoritmo,Tamanho,Caso,Repeticao,TempoMs.
+- A verificação de "já existe no CSV" também considera a repetição, então se o programa parar no meio ele continua da repetição em que parou. A chave de busca termina com vírgula para a repetição 1 não ser confundida com a 10.
+- Se der tempo, dá pra aumentar para 30 repetições (o recomendado) só mudando a constante.
+
+### Aquecimento da JVM (seção 4) ###
+
+A especificação recomenda fazer algumas execuções antes da coleta, para diminuir a influência das primeiras execuções na JVM, e diz que esses tempos não devem entrar nos resultados.
+
+Como cumprimos:
+- Antes de começar o experimento, o método Aquecer roda cada um dos dez algoritmos 5 vezes (EXECUCOES_AQUECIMENTO) num vetor aleatório de 10.000 elementos (TAMANHO_AQUECIMENTO). Ele usa outra semente, então não é o mesmo vetor das medições.
+- Esses tempos não são medidos nem salvos.
+- O motivo: no começo a JVM interpreta o código e só depois de ele ser executado várias vezes o compilador JIT gera código nativo otimizado. Sem o aquecimento, as primeiras medições pegam o código ainda não otimizado. Nos dados preliminares, sem aquecimento, o Bubble Sort no vetor crescente levou 1,65 ms com n = 1.000 e só 0,06 ms com n = 10.000. Num teste rápido com o aquecimento, o mesmo caso com n = 1.000 caiu para cerca de 0,03 ms.
+
+### Medição só da ordenação (seção 4) ###
+
+O System.nanoTime() é chamado logo antes e logo depois do sort.ordenar(...). A geração dos vetores, as cópias, a impressão e a gravação no CSV ficam fora do intervalo medido.
+
 ## Pendências ##
 
-Coisas que ainda faltam para atender a especificação do trabalho:
-
-- Repetições: hoje cada combinação algoritmo × tamanho × caso roda uma vez só. A especificação pede pelo menos 10 execuções (30 recomendadas), guardando todos os tempos individuais. A verificação "já existe no CSV" teria que considerar o número da repetição.
-- Aquecimento da JVM: a especificação recomenda rodar algumas execuções antes da coleta, que não entram nos resultados. Dá pra ver o efeito disso nos dados atuais: o Bubble Sort no vetor crescente levou 1,65 ms com n = 1.000 e só 0,06 ms com n = 10.000, ou seja, a primeira execução foi mais lenta mesmo com 10 vezes menos elementos.
-- Mesma entrada entre execuções: o vetor aleatório é gerado com new Random() sem semente. Se o programa for interrompido e rodado de novo, os algoritmos que faltavam recebem um vetor aleatório diferente dos que já tinham rodado. Usar uma semente fixa (ex.: new Random(42)) resolve isso.
-- O experimento parou no Selection Sort com n = 100.000 (falta o caso aleatório e os algoritmos seguintes, e o tamanho 1.000.000 inteiro). Para os O(n²) com n = 1.000.000 o tempo esperado é de horas; a especificação permite usar só um dos tamanhos maiores nos casos crescente e decrescente se isso bastar para a análise.
-- Estatísticas (média, mediana, mínimo, máximo, desvio-padrão) e gráficos.
+- Rodar o experimento completo com as 10 repetições.
+- Gráficos (as estatísticas já saem no resultados_organizados.csv).
 - Preencher hardware e software.
 
 ## Observações preliminares ##
 
-Com base em uma única execução por combinação (então os números ainda podem variar):
+Os primeiros tempos, de antes das repetições e do aquecimento, ficaram guardados em src/resultados_preliminares.csv. Eles têm uma execução só por combinação e não devem entrar nos resultados finais, mas já mostram algumas tendências:
 
-- Os algoritmos O(n²) crescem mais ou menos 100 vezes quando n cresce 10 vezes, como esperado. Caso aleatório de 10.000 para 100.000: Bubble 318 ms → 39.065 ms, Insertion 88 ms → 14.025 ms, Selection 164 ms → 16.190 ms.
+- Os algoritmos O(n²) crescem mais ou menos 100 vezes quando n cresce 10 vezes, como esperado. Caso aleatório de 10.000 para 100.000: Bubble 318 ms → 39.065 ms, Insertion 88 ms → 14.025 ms. O Selection Sort não chegou a rodar o aleatório com 100.000, mas no crescente foi de 163 ms → 16.190 ms.
 - O Merge Sort cresce mais ou menos 11 vezes no mesmo intervalo (8,6 ms → 97,8 ms), perto do esperado para n log n (10 · log(100.000)/log(10.000) ≈ 12,5).
 - O Selection Sort leva praticamente o mesmo tempo nos três casos (≈ 163 ms com n = 10.000), confirmando que ele não depende da ordem da entrada.
 - Bubble Sort (com a flag) e Insertion Sort são quase instantâneos no vetor crescente (menos de 1,2 ms com n = 100.000), que é o melhor caso O(n) deles.
