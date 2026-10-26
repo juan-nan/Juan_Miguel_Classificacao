@@ -52,6 +52,10 @@ public class TesteCorretude {
         testar("Quick Sort", v -> Ordenadores.QuickSort(0, v.length - 1, v));
         System.out.println("\n");
         testar("Bucket Sort", v -> Ordenadores.BucketSort(v));
+        System.out.println("\n");
+        testar("Counting Sort", v -> Ordenadores.CountingSort(v));
+        System.out.println("\n");
+        testar("Radix Sort", v -> Ordenadores.RadixSort(v));
         // depois quando a gente for testar os outros algoritmos com vetores pequenos pra validacao 
         // só mudar o bubble ai e trocar os parametros
     }

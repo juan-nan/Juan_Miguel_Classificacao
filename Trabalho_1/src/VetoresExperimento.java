@@ -124,6 +124,8 @@ public class VetoresExperimento {
             RodarTestes("Shell Sort", v -> Ordenadores.ShellSort(v, v.length), Casos);
             RodarTestes("Quick Sort", v -> Ordenadores.QuickSort(0, v.length - 1, v), Casos);
             RodarTestes("Bucket Sort", v -> Ordenadores.BucketSort(v), Casos);
+            RodarTestes("Counting Sort", v -> Ordenadores.CountingSort(v), Casos);
+            RodarTestes("Radix Sort", v -> Ordenadores.RadixSort(v), Casos);
         }
     }
 }

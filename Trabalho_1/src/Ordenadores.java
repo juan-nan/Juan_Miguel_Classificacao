@@ -177,7 +177,82 @@ public class Ordenadores {
             }
         }
     }
-    
+
+    // counting sort conta quantas vezes cada valor aparece e usa essas contagens para colocar cada elemento direto na posição final
+    public static void CountingSort(Integer[] a) {
+        int n = a.length;
+        if (n <= 1) return;
+
+        int min = a[0], max = a[0];
+        for (int i = 0; i < n; i++) {
+            if (a[i] < min) min = a[i];
+            if (a[i] > max) max = a[i];
+        }
+        int k = max - min + 1; // tamanho da faixa de valores
+
+        int[] c = new int[k];
+        for (int i = 0; i < n; i++) {
+            c[a[i] - min]++;
+        }
+        // soma acumulada: c[v] passa a ser quantos elementos são <= v
+        for (int v = 1; v < k; v++) {
+            c[v] += c[v - 1];
+        }
+
+        // percorre de trás pra frente para manter a ordem dos iguais (estável)
+        Integer[] b = new Integer[n];
+        for (int i = n - 1; i >= 0; i--) {
+            c[a[i] - min]--;
+            b[c[a[i] - min]] = a[i];
+        }
+        for (int i = 0; i < n; i++) {
+            a[i] = b[i];
+        }
+    }
+
+    // radix sort ordena dígito por dígito, do menos significativo para o mais, usando um counting sort estável em cada dígito
+    public static void RadixSort(Integer[] a) {
+        int n = a.length;
+        if (n <= 1) return;
+
+        // desloca pelo menor valor para funcionar também com negativos
+        int min = a[0], max = a[0];
+        for (int i = 0; i < n; i++) {
+            if (a[i] < min) min = a[i];
+            if (a[i] > max) max = a[i];
+        }
+        long maior = (long) max - min;
+
+        Integer[] b = new Integer[n];
+        for (long exp = 1; maior / exp > 0; exp *= 10) {
+            countingPorDigito(a, b, min, exp);
+        }
+    }
+
+    // counting sort estável em a usando só o dígito (a[i] - min) / exp % 10
+    private static void countingPorDigito(Integer[] a, Integer[] b, int min, long exp) {
+        int n = a.length;
+        int[] c = new int[10];
+        for (int i = 0; i < n; i++) {
+            c[digito(a[i], min, exp)]++;
+        }
+        for (int d = 1; d < 10; d++) {
+            c[d] += c[d - 1];
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            int d = digito(a[i], min, exp);
+            c[d]--;
+            b[c[d]] = a[i];
+        }
+        for (int i = 0; i < n; i++) {
+            a[i] = b[i];
+        }
+    }
+
+    private static int digito(int x, int min, long exp) {
+        return (int) (((long) x - min) / exp % 10);
+    }
+
 
     // ---------------- métodos auxiliares ----------------
 //troca pra usar no bubble
