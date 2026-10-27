@@ -24,7 +24,7 @@ public class VetoresExperimento {
     public static final String ARQUIVO_CSV_ORGANIZADO = "resultados_organizados.csv";
 
     // 1.000.000 ficou de fora: os algoritmos O(n²) levariam horas por execução
-    public static final int[] TAMANHOS = {1000, 10000, 100000};
+    public static final int[] TAMANHOS = {1000, 10000, 100000, 1000000};
 
     // cada combinação algoritmo x tamanho x caso roda essa quantidade de vezes (a especificação pede no mínimo 10)
     public static final int REPETICOES = 10;
@@ -76,7 +76,8 @@ public class VetoresExperimento {
 
     public static void RodarTestes(String nomeAlgoritmo, Ordenador sort, Integer[][] Casos){
         for(int j = 0; j < 3; j++){
-            for (int rep = 1; rep <= REPETICOES; rep++) {
+            int reps = RepeticoesPara(Casos[j].length);
+            for (int rep = 1; rep <= reps; rep++) {
                 if (experimentoJaExiste(nomeAlgoritmo, Casos[j].length, NOMES_CASOS[j], rep)) {
                         System.out.println("[PULADO] " + nomeAlgoritmo + " | " + Casos[j].length + " | " + NOMES_CASOS[j] + " | rep " + rep);
                         continue;
@@ -179,6 +180,12 @@ public class VetoresExperimento {
         GerarCsvOrganizado();
     }
 
+    public static final int TAMANHO_EXECUCAO_UNICA = 1_000_000;
+
+    public static int RepeticoesPara(int tamanho) {
+        return tamanho >= TAMANHO_EXECUCAO_UNICA ? 1 : REPETICOES;
+    }
+
     // lê o CSV com uma linha por execução e monta o CSV organizado, com as repetições em colunas e as estatísticas no final
     public static void GerarCsvOrganizado() {
         Map<String, double[]> tempos = new HashMap<>();
@@ -214,30 +221,38 @@ public class VetoresExperimento {
                 for (int tamanho : TAMANHOS) {
                     for (String caso : NOMES_CASOS) {
                         String chave = algoritmo + "," + tamanho + "," + caso;
-                        double[] t = tempos.get(chave);
-                        // só entra no CSV organizado quando as REPETICOES execuções já rodaram
-                        if (t == null || Arrays.stream(t).anyMatch(Double::isNaN)) continue;
+                        double[] todos = tempos.get(chave);
+                        if (todos == null) continue;
+
+                        int n = RepeticoesPara(tamanho);
+                        double[] t = Arrays.copyOf(todos, n);
+                        // só entra no CSV organizado quando as n execuções desse tamanho já rodaram
+                        if (Arrays.stream(t).anyMatch(Double::isNaN)) continue;
 
                         StringBuilder linha = new StringBuilder(chave);
-                        for (double x : t) {
-                            linha.append(",").append(x);
+                        for (int rep = 0; rep < REPETICOES; rep++) {
+                            linha.append(",");
+                            if (rep < n) linha.append(t[rep]); // colunas vazias nas repetições que não existem
                         }
 
                         double soma = 0;
                         for (double x : t) soma += x;
-                        double media = soma / t.length;
+                        double media = soma / n;
 
-                        double somaQuadrados = 0;
-                        for (double x : t) somaQuadrados += (x - media) * (x - media);
-                        double desvio = Math.sqrt(somaQuadrados / (t.length - 1)); // desvio-padrão amostral
+                        double desvio = 0;
+                        if (n > 1) {
+                            double somaQuadrados = 0;
+                            for (double x : t) somaQuadrados += (x - media) * (x - media);
+                            desvio = Math.sqrt(somaQuadrados / (n - 1)); // desvio-padrão amostral
+                        }
 
                         double[] ordenado = t.clone();
                         Arrays.sort(ordenado); // só para a mediana, não faz parte do experimento
-                        int meio = ordenado.length / 2;
-                        double mediana = ordenado.length % 2 == 0 ? (ordenado[meio - 1] + ordenado[meio]) / 2 : ordenado[meio];
+                        int meio = n / 2;
+                        double mediana = n % 2 == 0 ? (ordenado[meio - 1] + ordenado[meio]) / 2 : ordenado[meio];
 
                         linha.append(String.format(Locale.US, ",%.6f,%.6f,%.6f,%.6f,%.6f",
-                                media, mediana, ordenado[0], ordenado[ordenado.length - 1], desvio));
+                                media, mediana, ordenado[0], ordenado[n - 1], desvio));
                         pw.println(linha);
                     }
                 }
