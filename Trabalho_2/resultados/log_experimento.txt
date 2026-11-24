@@ -1,0 +1,66 @@
+Experimento: 15 grafos × 2 algoritmos × 2 representações = 60 blocos; 10 execuções medidas por bloco (aquecimento: >= 5 execuções e >= 1000 ms)
+Cada bloco em JVM nova; ordem aleatória (semente 2026); origem = vértice 1
+Java 21.0.13.1 (/usr/lib/jvm/java-21-openjdk-amd64/bin/java), 8 núcleos, opções JVM [-Xms2g, -Xmx2g]
+
+[ 1/60] sample200-31840.gr   Dijkstra     LA  média      0.156 ms  mediana      0.136 ms
+[ 2/60] sample100-5940.gr    Bellman-Ford LA  média      0.875 ms  mediana      0.865 ms
+[ 3/60] sample100-5940.gr    Dijkstra     LA  média      0.056 ms  mediana      0.058 ms
+[ 4/60] sample200-15920.gr   Bellman-Ford MA  média     46.402 ms  mediana     46.786 ms
+[ 5/60] sample500-49900.gr   Bellman-Ford LA  média     74.436 ms  mediana     73.482 ms
+[ 6/60] sample100-9900.gr    Bellman-Ford LA  média      1.492 ms  mediana      1.491 ms
+[ 7/60] sample200-7960.gr    Dijkstra     MA  média      0.242 ms  mediana      0.244 ms
+[ 8/60] sample500-99800.gr   Dijkstra     MA  média      2.720 ms  mediana      2.592 ms
+[ 9/60] sample500-199600.gr  Bellman-Ford LA  média    430.447 ms  mediana    412.536 ms
+[10/60] sample500-149700.gr  Dijkstra     MA  média      4.117 ms  mediana      3.999 ms
+[11/60] sample200-7960.gr    Bellman-Ford LA  média      5.208 ms  mediana      5.100 ms
+[12/60] sample100-9900.gr    Bellman-Ford MA  média      7.958 ms  mediana      7.841 ms
+[13/60] sample100-9900.gr    Dijkstra     MA  média      0.167 ms  mediana      0.156 ms
+[14/60] sample100-1980.gr    Bellman-Ford LA  média      0.410 ms  mediana      0.380 ms
+[15/60] sample500-149700.gr  Bellman-Ford LA  média    277.470 ms  mediana    266.717 ms
+[16/60] sample100-3960.gr    Bellman-Ford LA  média      0.749 ms  mediana      0.732 ms
+[17/60] sample100-7920.gr    Bellman-Ford MA  média      7.508 ms  mediana      7.376 ms
+[18/60] sample200-15920.gr   Dijkstra     LA  média      0.098 ms  mediana      0.087 ms
+[19/60] sample200-7960.gr    Dijkstra     LA  média      0.093 ms  mediana      0.092 ms
+[20/60] sample200-31840.gr   Dijkstra     MA  média      0.635 ms  mediana      0.632 ms
+[21/60] sample200-23880.gr   Bellman-Ford LA  média     11.668 ms  mediana     11.438 ms
+[22/60] sample100-5940.gr    Bellman-Ford MA  média      6.069 ms  mediana      5.984 ms
+[23/60] sample100-3960.gr    Dijkstra     MA  média      0.085 ms  mediana      0.079 ms
+[24/60] sample200-39800.gr   Bellman-Ford MA  média     64.386 ms  mediana     62.428 ms
+[25/60] sample500-49900.gr   Dijkstra     LA  média      0.336 ms  mediana      0.329 ms
+[26/60] sample500-149700.gr  Dijkstra     LA  média      1.458 ms  mediana      1.494 ms
+[27/60] sample200-31840.gr   Bellman-Ford LA  média     12.308 ms  mediana     12.220 ms
+[28/60] sample500-249500.gr  Bellman-Ford LA  média    502.221 ms  mediana    500.088 ms
+[29/60] sample200-31840.gr   Bellman-Ford MA  média     61.177 ms  mediana     60.794 ms
+[30/60] sample100-3960.gr    Dijkstra     LA  média      0.044 ms  mediana      0.042 ms
+[31/60] sample100-3960.gr    Bellman-Ford MA  média      5.014 ms  mediana      4.768 ms
+[32/60] sample100-5940.gr    Dijkstra     MA  média      0.135 ms  mediana      0.134 ms
+[33/60] sample200-7960.gr    Bellman-Ford MA  média     24.595 ms  mediana     24.420 ms
+[34/60] sample200-23880.gr   Dijkstra     MA  média      0.609 ms  mediana      0.611 ms
+[35/60] sample100-7920.gr    Dijkstra     MA  média      0.112 ms  mediana      0.102 ms
+[36/60] sample200-23880.gr   Bellman-Ford MA  média     56.709 ms  mediana     55.761 ms
+[37/60] sample500-199600.gr  Dijkstra     LA  média      1.750 ms  mediana      1.776 ms
+[38/60] sample100-1980.gr    Dijkstra     LA  média      0.019 ms  mediana      0.015 ms
+[39/60] sample100-1980.gr    Dijkstra     MA  média      0.055 ms  mediana      0.054 ms
+[40/60] sample500-199600.gr  Dijkstra     MA  média      3.752 ms  mediana      3.651 ms
+[41/60] sample500-99800.gr   Dijkstra     LA  média      0.948 ms  mediana      0.970 ms
+[42/60] sample200-15920.gr   Dijkstra     MA  média      0.387 ms  mediana      0.378 ms
+[43/60] sample200-23880.gr   Dijkstra     LA  média      0.118 ms  mediana      0.104 ms
+[44/60] sample200-39800.gr   Dijkstra     LA  média      0.163 ms  mediana      0.148 ms
+[45/60] sample500-99800.gr   Bellman-Ford LA  média    156.131 ms  mediana    165.583 ms
+[46/60] sample200-15920.gr   Bellman-Ford LA  média      7.054 ms  mediana      7.054 ms
+[47/60] sample500-99800.gr   Bellman-Ford MA  média    650.640 ms  mediana    649.414 ms
+[48/60] sample500-149700.gr  Bellman-Ford MA  média    980.035 ms  mediana    957.325 ms
+[49/60] sample500-249500.gr  Bellman-Ford MA  média   1308.357 ms  mediana   1275.311 ms
+[50/60] sample200-39800.gr   Dijkstra     MA  média      0.424 ms  mediana      0.408 ms
+[51/60] sample200-39800.gr   Bellman-Ford LA  média     16.154 ms  mediana     15.198 ms
+[52/60] sample100-9900.gr    Dijkstra     LA  média      0.038 ms  mediana      0.031 ms
+[53/60] sample100-7920.gr    Dijkstra     LA  média      0.035 ms  mediana      0.030 ms
+[54/60] sample500-249500.gr  Dijkstra     LA  média      2.061 ms  mediana      2.059 ms
+[55/60] sample500-49900.gr   Dijkstra     MA  média      1.110 ms  mediana      1.077 ms
+[56/60] sample100-1980.gr    Bellman-Ford MA  média      2.512 ms  mediana      2.490 ms
+[57/60] sample100-7920.gr    Bellman-Ford LA  média      1.112 ms  mediana      1.109 ms
+[58/60] sample500-199600.gr  Bellman-Ford MA  média   1241.099 ms  mediana   1198.044 ms
+[59/60] sample500-49900.gr   Bellman-Ford MA  média    430.991 ms  mediana    410.575 ms
+[60/60] sample500-249500.gr  Dijkstra     MA  média      3.862 ms  mediana      3.828 ms
+
+Concluído em 164,4 s. CSV: resultados/resultados_experimento.csv
